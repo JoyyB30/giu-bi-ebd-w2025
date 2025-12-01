@@ -1,13 +1,6 @@
-# Template README for BINF 503 Project
 
-## Open on GitHub: [template\_\_README.md](https://github.com/nourgaser-giu/giu-bi-ebd-w2025/blob/main/template__milestone0_README.md)
-
-## Download (ctrl+s to save): [template\_\_README.md](https://raw.githubusercontent.com/nourgaser-giu/giu-bi-ebd-w2025/main/template__milestone0_README.md)
-
-<!-- Delete all of the above for your submission -->
-
-# [Insert Project Name Here]
-
+ FARMCONNET
+ 
 **Course:** Electronic Business Development (BINF 503)  
 **Semester:** Winter 2025  
 **Instructor:** Dr. Nourhan Hamdi  
@@ -21,38 +14,77 @@ _List all team members (5-6 students) below._
 
 | Name             | Student ID | Tutorial Group | GitHub Username |
 | :--------------- | :--------- | :------------- | :-------------- |
-| [Student 1 Name] | [ID]       | [T#]           | [@username]     |
-| [Student 2 Name] | [ID]       | [T#]           | [@username]     |
-| [Student 3 Name] | [ID]       | [T#]           | [@username]     |
-| [Student 4 Name] | [ID]       | [T#]           | [@username]     |
-| [Student 5 Name] | [ID]       | [T#]           | [@username]     |
-| [Student 6 Name] | [ID]       | [T#]           | [@username]     |
+| Hana Khaled         	13002847	    T-06           Hanakhaledd
+  Malak Fawzy           13007189	     T-06           malakfawzyy
+Aya Hussein	            13004531       T-06         	Ayahussein394
+Joy Bassem	            13003606       T-06         	JoyyB30
+Malak gharib	          13007525        T-02            malakgharib
+Salama Walid          	13007299       T-06            salmawalidd
+|
 
 ---
 
 ## 2. Project Description
 
-_Provide a detailed description of your project concept here. What is the app? What problem does it solve?_
+FarmConnect is a FinTech solution designed to digitize the financial activities of small farmers in Egypt
+The app acts as a bridge between the farmer, their suppliers, and the bank, helping farmers:
+•	Record sales
+•	Record purchases from suppliers
+•	Get automatic daily/monthly totals
+•	Request micro-loans using their national ID
+All activity is stored in the backend and becomes a digital financial history that the bank can access to evaluate the farmer’s creditworthiness.
+This solves the core problem:
+Farmers have no digital records → banks cannot trust or evaluate them → farmers cannot access loans.
+FarmConnect replaces paper, guesswork, and middlemen with a clean digital profile.
 
-- **Concept:** [Brief Summary]
-- **Link to Fin-Tech Course Document:** [Insert Link if applicable]
-
----
 
 ## 3. Feature Breakdown
 
 ### 3.1 Full Scope
 
-_List ALL potential features/user stories envisioned for the complete product (beyond just this course)._
-
-- Feature A
-- Feature B
-- Feature C
-- ...
+List ALL potential features/user stories envisioned for the complete product (beyond just this course).
+ Feature A — Farmer Financial Recording
+•	Record daily sales
+•	Record purchases from supplier
+•	Auto-calculate totals
+•	Track price trends of products
+ Feature B — Supplier Interaction
+•	Supplier account creation
+•	Confirm purchase orders
+•	Digital receipts
+•	Supplier dashboard
+ Feature C — Bank Integration
+•	Farmer credit score generation
+•	View full transaction history
+•	View loan repayment history
+•	Automated loan approval system
+Feature D — USSD/SMS Real Integration
+•	Connect with telecom APIs
+•	Real SMS logging
+•	Offline transaction syncing
+Feature E — Farmer Analytics
+•	Income vs Expenses charts
+•	Productivity trends
+•	Seasonal income prediction
+ Feature F — Localization & Accessibility
+•	Arabic/English language toggle
+•	Voice-based menu navigation
+•	Large text mode
+ Feature G — Security & Identity
+•	Biometric verification (future)
+•	Photo/scan of national ID
 
 ### 3.2 Selected MVP Use Cases (Course Scope)
 
-_From the list above, identify the **5 or 6 specific use cases** you will implement for this course. Note: User Authentication is mandatory._
+From the list above, identify the 5 or 6 specific use cases you will implement for this course. Note: User Authentication is mandatory.
+•  User Authentication (Registration & Login) 
+•  Record Sales Transaction
+•  Record Purchase from Supplier
+•  View Monthly Totals (Income & Expenses)
+•  Request Loan Using National ID
+•  Bank Dashboard (View farmer history & loan requests)
+
+
 
 1.  **User Authentication** (Registration/Login)
 2.  [Use Case 2 Title]
@@ -69,12 +101,13 @@ _Assign one distinct use case from Section 3.2 to each team member. This member 
 
 | Team Member | Assigned Use Case       | Brief Description of Responsibility              |
 | :---------- | :---------------------- | :----------------------------------------------- |
-| [Student 1] | **User Authentication** | Register, Login, JWT handling, Password Hashing. |
-| [Student 2] | [Use Case 2]            | [e.g., Create and view Transaction history]      |
-| [Student 3] | [Use Case 3]            | [e.g., Profile management and updates]           |
-| [Student 4] | [Use Case 4]            | [e.g., Transfer funds logic]                     |
-| [Student 5] | [Use Case 5]            | [Description]                                    |
-| [Student 6] | [Use Case 6]            | [Description]                                    |
+|Hana Khaled:	User Authentication	      Implement registration & login for bank/admin users. Use JWT for secure API. Farmers don’t log in (simulated SMS).
+Malak Fawzy:	Record sales	USSD prompts, posting sales data to backend, storing in DB
+Aya Hussein:	 Record Purchases     Supplier phone prompt, item entry, cost calc, DB store
+Joy Bassem	:Monthly Totals	Income/expense aggregation, API routes, calculations
+Malak Gharib:	Loan Requests	Loan form, national ID input, DB logic, loan status
+Salma Walid : Bank Dashboard 	       Fetch farmer records, view loan requests, approve/reject
+
 
 ---
 
@@ -82,25 +115,43 @@ _Assign one distinct use case from Section 3.2 to each team member. This member 
 
 _Define the initial Mongoose Schemas for your application’s main data models (User, Transaction, Account, etc.). You may use code blocks or pseudo-code._
 
-### User Schema
-
-```javascript
+User Schema
 const UserSchema = new mongoose.Schema({
   username: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
+  phone: { type: String, required: true, unique: true },
+  nationalID: { type: String },
+  role: { type: String, enum: ["farmer", "bank", "admin"], default: "farmer" },
   password: { type: String, required: true },
-  // Add other fields...
+}, { timestamps: true });
+________________________________________
+Sales Schema
+const SalesSchema = new mongoose.Schema({
+  farmerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  productType: { type: String, required: true },
+  quantity: { type: Number, required: true },
+  pricePerUnit: { type: Number, required: true },
+  totalPrice: { type: Number, required: true },
+  date: { type: Date, default: Date.now }
 });
-```
+________________________________________
+Purchase Schema
+const PurchaseSchema = new mongoose.Schema({
+  farmerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  supplierPhone: { type: String, required: true },
+  itemType: { type: String, required: true },
+  quantity: { type: Number, required: true },
+  unitPrice: { type: Number, required: true },
+  totalCost: { type: Number, required: true },
+  date: { type: Date, default: Date.now }
+});
+________________________________________
+Loan Request Schema
+const LoanRequestSchema = new mongoose.Schema({
+  farmerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  nationalID: { type: String, required: true },
+  status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
+  approvedAmount: { type: Number, default: 0 },
+  dateRequested: { type: Date, default: Date.now }
+});
 
-### [Model 2 Name] Schema
 
-```javascript
-// Define schema here
-```
-
-### [Model 3 Name] Schema
-
-```javascript
-// Define schema here
-```
